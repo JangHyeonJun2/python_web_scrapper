@@ -9,10 +9,10 @@ import re
 
 
 db = pymysql.connect(
-    host = " ",
-    user = " ",
-    password = " ",
-    database = " ",
+    host = "localhost",
+    user = "root",
+    password = "0653",
+    database = "mty",
     charset='utf8mb4',
 )
 
@@ -26,10 +26,10 @@ headers.update({'User-Agent':'Mozilla/5.0'})
 var1 = 0 
 var2 = 1
 
-for i in range(var1,var2):
+
    # Fetching Url  
-    base_url = "https://stackoverflow.com/"
-    url = "https://stackoverflow.com/questions/59078411/setting-react-props-state-from-jquery-tree-event"
+    base_url = "https://heykorean.com/"
+    url = "https://rent.heykorean.com/web/us/property/list/"
 
     path = "/Users/janghyeonjun/Downloads/chromedriver" #chrome 브라우저를 쓰기 떄문에 chrome 드라이버 사용
     driver = webdriver.Chrome(path)
@@ -62,17 +62,17 @@ for i in range(var1,var2):
             question.append({"title": title ,"User_id" : user})
             print(question)
         
-        driver.quit()
+        #driver.quit()
 
 
-#         ###  INSERT RECORD  ### 
-#             insert = "INSERT INTO mty.rent_sample(title, rent_type, rent_location, rent_price) VALUES ('{0}', '{1}', '{2}', '{3}')".format(title_list,rent_room,rent_loc,rent_price)
-#             cursor.execute(insert)
-#             remaining_rows = cursor.fetchall()  ## fetches all the rows of a query result
-#             # db.commit()
-#             print(cursor.rowcount, "Record Inserted")
-#             db.rollback()
-# db.close()
+        ###  INSERT RECORD  ### 
+            insert = "INSERT INTO mty.rent_sample(title, rent_type, rent_location, rent_price) VALUES ('{0}', '{1}', '{2}', '{3}')".format(title_list,rent_room,rent_loc,rent_price)
+            cursor.execute(insert)
+            remaining_rows = cursor.fetchall()  ## fetches all the rows of a query result
+            db.commit()
+            print(cursor.rowcount, "Record Inserted")
+            db.rollback()
+db.close()
 
 
 # ###  CREATE A TABLE  ###
