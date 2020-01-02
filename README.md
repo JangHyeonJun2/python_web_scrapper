@@ -114,7 +114,7 @@
 
     - 무한루프 돌리면서 스위치문에서 선택함수 넣기
 
-      | ![image-20200103071241641](/Users/janghyeonjun/Library/Application Support/typora-user-images/image-20200103071241641.png) |
+      | [![2020-01-03-7-11-23.png](https://i.postimg.cc/pdSyxJRR/2020-01-03-7-11-23.png)](https://postimg.cc/4KzXQtYS)|
       | ------------------------------------------------------------ |
       | Flowchart                                                    |
 
