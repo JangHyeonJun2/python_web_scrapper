@@ -301,8 +301,8 @@ git merge mty/master
 #### 참고문헌
 
 https://xe1.xpressengine.com/devlog/22791272
-
 https://wayhome25.github.io/git/2017/07/08/git-first-pull-request-story/
+https://playinlion.tistory.com/29
 
 
 
