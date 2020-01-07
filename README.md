@@ -117,4 +117,174 @@
       | [![2020-01-03-7-11-23.png](https://i.postimg.cc/pdSyxJRR/2020-01-03-7-11-23.png)](https://postimg.cc/4KzXQtYS)|
       | ------------------------------------------------------------ |
       | Flowchart                                                    |
+---------------
+---------------
+# GitHub Fork 정리
+
+### 개요
+
+1. Fork란?
+2. Clone,remote 설정
+3. Branch 생성
+4. 수정 작업 후 add, commit,push
+5. Pull Request 생성
+6. 코드리뷰,Merge Pull Request
+7. Merge 이후 branch 삭제 및 동기화
+
+---------
+
+#### Fork란?
+
+- Fork는 다른 사람의 Github repository에서 내가 어떤 부분을 수정하거나 추가 기능을 넣고 싶을 때 해당 repository를 내 Github repositroy로 그대로 복제하는 기능이다.Fork한 저장소는 원본(다른 사람의 github repositroy)와 연결되어 있다. 여기서 연결되어 있다는 의미는 original repository에 어떤 변화가 생기면(새로운 commit)이는 그래도 forked된 repository로 반영할 수 있다. 그 후 original repository에 변경 사항을 적용하고 싶으면 해당 저장소에 pull request를 해야한다. pull request가 original repository의 관리자로부터 승인 되었으면 내가 만든 코드가 commit,merge되어 original에 반영된다.pull request 하기 전까지는 내 github에 있는 forked repository에만 change가 적용된다.
+
+- 타겟 프로젝트의 저장소를 자신의 저장소로 Fork 한다.
+
+[![2020-01-06-3-12-34.png](https://i.postimg.cc/Ls2yBVVY/2020-01-06-3-12-34.png)](https://postimg.cc/hXZbKT6c)
+
+[![2020-01-06-3-14-07.png](https://i.postimg.cc/QdJL3C47/2020-01-06-3-14-07.png)](https://postimg.cc/v4T27Yd8)
+
+-----------
+
+#### Clone,remote 설정
+
+- fork로 생성한 본인 계정의 저장소에서 **clone or download** 버튼을 누르고 표시되는 url을 복사한다. (중요 - 브라우저 url을 그냥 복사하면 안 된다)
+
+[![2020-01-06-3-19-56.png](https://i.postimg.cc/CKh3L0XQ/2020-01-06-3-19-56.png)](https://postimg.cc/pmSGqw2f)
+
+- 터미널을 켠다(mac기준)
+
+- 자신의 컴퓨터에서 작업을 하기 위해서 Fork한 저장소를 로컬에 clone 한다.
+
+```
+git clone https://github.com/JangHyeonJun2/application.git
+```
+
+- 로컬 저장소에 원격 저장소를 추가한다. 위 작업과 동일하게 github 저장소에서 **clone or download** 메뉴를 통해서 확인한 url을 사용한다.
+
+  - 원본 프로젝트 저장소 (직접 추가 필요)
+  - fork한 로컬 프로젝트 (origin이라는 별명으로 기본으로 추가되어 있다. 따로 추가할 필요 없음)
+
+  ```
+  # 원본 프로젝트 저장소를 원격 저장소로 추가
+  $ git remote add mty(별명) https://github.com/원본계정/blog.github.io.git
+  
+  # 원격 저장소 설정 현황 확인방법
+  $ git remote -v
+  ```
+
+--------
+
+#### branch 생성
+
+- 자신의 로컬 컴퓨터에서 코드를 추가하는 작업은 branch를 만들어서 진행한다.
+
+**개발을 하다 보면 코드를 여러 개로 복사해야 하는 일이 자주 생긴다. 코드를 통째로 복사하고 나서 원래 코드와는 상관없이 독립적으로 개발을 진행할 수 있는데, 이렇게 독립적으로 개발하는 것이 브랜치다. **
+
+```
+# develop 이라는 이름의 branch를 생성한다.
+$ git checkout -b develop
+Switched to a new branch 'develop'
+
+# 이제 2개의 브랜치가 존재한다.
+$ git branch
+* develop
+  master
+```
+
+-----
+
+#### 수정 작업 후 add, commit,push
+
+##### pull request 보내기(local 저장소의 수정사항을 remote 컨트리뷰터 저장소로 보내기)
+
+- 먼저 clone한 디렉토리로 이동합니다.
+
+```
+janghyeonjun-ui-MacBookPro:~ janghyeonjun$ cd application/
+janghyeonjun-ui-MacBookPro:application janghyeonjun$ ls
+app.py
+```
+
+- develop branch에서 PR을 보내기 위한 수정을 처리하게 되면 PR 보낼 때 문제가 발생하게 됩니다.
+  발생할 문제에 대해서는 뒤에 언급 하도록 하겠습니다. develop branch로 PR을 보내므로 develop branch에서 새로운 branch를 생성합니다.
+
+```
+janghyeonjun-ui-MacBookPro:application janghyeonjun$ git checkout -b develop-test1
+Switched to a new branch 'develop-test1'
+```
+
+**develop-test1은 임의로 정한 branch 이름입니다. 개인의 취향에 맞게 작성하시면 됩니다.**
+
+- Application/app.py를 수정하고 commit합니다.
+
+```
+janghyeonjun-ui-MacBookPro:application janghyeonjun$ ls
+app.py
+janghyeonjun-ui-MacBookPro:application janghyeonjun$ vi app.py
+janghyeonjun-ui-MacBookPro:application janghyeonjun$ vi app.py
+janghyeonjun-ui-MacBookPro:application janghyeonjun$ git add app.py
+janghyeonjun-ui-MacBookPro:application janghyeonjun$ git commit -m "Fork연습"
+```
+
+- 수정 변경 사항을 내 저장소로 push합니다.
+
+```
+janghyeonjun-ui-MacBookPro:application janghyeonjun$ git push origin develop-test1
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 298 bytes | 298.00 KiB/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+remote: 
+remote: Create a pull request for 'develop-test1' on GitHub by visiting:
+remote:      https://github.com/JangHyeonJun2/application/pull/new/develop-test
+remote: 
+To https://github.com/JangHyeonJun2/application.git
+ * [new branch]      develop-test1 -> develop-test1
+```
+
+- 나의 remote 저장소에  develop-test1 branch가 생성되고 commit 내용이 push되었다.
+
+[![2020-01-06-4-06-12.png](https://i.postimg.cc/7ZDcmDHZ/2020-01-06-4-06-12.png)](https://postimg.cc/567n2hQh)
+
+- JangHyeonJun2 저장소의 develop-test1 branch 의 수정된 내용을 koriny저장소의 develp branch로 보내야 합니다. 현재 koriny 저장소의 master branch로 보내도록 되어 있으므로 branch를 develop으로 변경합니다.(하지만 지금 실습에는 koriny에 develop브랜치가 없기 때문에 master로 하였다.)
+
+[![2020-01-07-2-33-06.png](https://i.postimg.cc/nLSPFDvX/2020-01-07-2-33-06.png)](https://postimg.cc/NyT4bLCt)
+
+- 다음 단계에서 Create Pull Request를 클릭하여 PR을 보낸다.
+
+[![2020-01-07-2-34-40.png](https://i.postimg.cc/xTVF1Yb3/2020-01-07-2-34-40.png)](https://postimg.cc/hhM02ksX)
+
+-------
+
+#### 코드리뷰,Merge Pull Request
+
+- PR을 받은 원본 저장소 관리자는 코드 변경내역을 확인하고 Merge여부를 결정한다.
+
+#### Merge 이후 동기화 및 branch 삭제
+
+- 원본 저장소에 Merge가 완료되면 로컬 코드와 원본 저장소의 코드를 동기화 한다.
+- 작업하던 로컬의 branch를 삭제한다.
+
+```
+# 코드 동기화
+$ git pull real-blog(remote 별명)
+# 브랜치 삭제
+$ git branch -d develop(브랜치 별명)
+```
+
+- 나중에 추가로 작업할 일이 있으면 `git pull real-blog(remote 별명)` 명령을 통해 원본 저장소와 동기화를 진행하고 3~7을 반복한다.
+
+-----------
+
+#### 참고문헌
+
+https://xe1.xpressengine.com/devlog/22791272
+
+https://wayhome25.github.io/git/2017/07/08/git-first-pull-request-story/
+
+
+
 
