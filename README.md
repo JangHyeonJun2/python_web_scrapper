@@ -82,6 +82,18 @@
 - ID를 통해 요소 접근하기
 [![2020-01-10-2-05-44.png](https://i.postimg.cc/HLNv3nKQ/2020-01-10-2-05-44.png)](https://postimg.cc/QBpqd8jt)
 먼저 태그에 접근하기 위해서는 태그 id를 알아야한다. 개발자 도구를 들어간 후 여러가지 항목에 마우스 커서를 올리면 무엇에 관한건지 캡처되어 설명이 나오는 걸 알 수 있다.
+- 사용법
+1. from selenium import webdriver
+2. driver = webdriver.Chrome('C:/chromedriver.exe')
+3. driver.get("http://naver.com")
+4. elem1=driver.find_element_by_id("query")
+5. elem1.send_keys("셀레니움")
+
+3번째 라인 - 크롬 드라이버를 통해 크롬을 연다.<br>
+4번째 라인 - 네이버에 접속한다.<br>
+5번째 라인 id query라는 이름을 가진 element(요소)에 접근한다.<br>
+6번째 라인 - 그 요소에서 “셀레니움”이라는 값을 send(전송) 해준다.<br>
+
 -----------
 # 2주차
 
