@@ -110,7 +110,7 @@
 -------------
 ### 세부사항
 
-- 주기적인 스크래핑 → Proxy로 가상브라우저 만들고, ip우회 → 데이터에서 selector 조회 → 스크래핑한 데이터 및 selector DB 저장
+- 주기적인 스크래핑 → Proxy로 가상브라우저 만들고, ip우회 → 지정된 selector를 통하여 데이터 조회 → 스크래핑한 데이터 및 지정된 selector DB 저장
 - Function Naming
 
   - DB 접속함수
