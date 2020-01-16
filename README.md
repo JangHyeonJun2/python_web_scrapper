@@ -4,6 +4,7 @@
 [1.개요](#개요)<br>
 [2.1주차](#1주차)<br>
 [3.2주차](#2주차)<br>
+[4.3주차](#3주차)<br>
 [5.GitHub Fork 정리](#github-fork-정리)<br>
 
 -----------
@@ -140,6 +141,155 @@
     - 프로그램 실행
 
 ---------------
+# 3주차
+
+#### 스키마 작성, Selector바로알기, IP우회해서 사이트 접속하기
+
+- DataBase 스키마 작성
+
+스키마 부분은 난중에 완전히 작성되면 올리기
+
+- css selector 정의
+
+  - 스타일을 지정할 요소를 선택하는 데 사용되는 패턴입니다.
+  - 선택자는 css규치 세트의 일부이다. 그래서 ID,Class,type,attribute 등에 따라 HTML요소를 선택한다. 
+
+  | Selector                                                     | Example                                                      | Example description                                          |
+  | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+  | [.*class*](https://www.w3schools.com/cssref/sel_class.asp)   | .intro                                                       | Selects all elements with class="intro"                      |
+  | *.class1.class2*                                             | <div class="name1 name2">...</div>                           | Selects all elements with both *name1* and *name2* set within its class attribute |
+  | *.class1 .class2*                                            | <div class="name1">  <div class="name2">   ...  </div> </div> | Selects all elements with *name2* that is a descendant of an element with *name1* |
+  | [#*id*](https://www.w3schools.com/cssref/sel_id.asp)         | #firstname                                                   | Selects the element with id="firstname"                      |
+  | [*](https://www.w3schools.com/cssref/sel_all.asp)            | *                                                            | Selects all elements                                         |
+  | *[element](https://www.w3schools.com/cssref/sel_element.asp)* | p                                                            | Selects all <p> elements                                     |
+  | *[element.class](https://www.w3schools.com/cssref/sel_element_class.asp)* | p.intro                                                      | Selects all <p> elements with class="intro"                  |
+
+  
+
+- css selector 스크래핑
+
+- css selector가 있어야 사용자가 이 selector를 이용하여 어디 위치인지 바로 알 수 있다.
+
+  - Css selector = 선택자 
+
+  - 선택자란 말 그대로 선택해 주는 요소이다.css 코드에서 특정 요소를 선택하여 스타일을 적용할 때 사용한다. 이 선택자를 이용해 필요한 부분을 선택하여 스크래핑 한다.
+
+  - ```
+    #PM_ID_ct > div.header > div.section_navbar > div.area_hotkeyword.PM_CL_realtimeKeyword_base > div.ah_roll.PM_CL_realtimeKeyword_rolling_base > div > ul > li:nth-child(19) > a > span.ah_k
+    ```
+
+  - 메모장에 붙여 넣어 보면 이런 선택자가 보인다.여기서 **li:nth-child(19)**에서 숫자 19는 순위를 의미 한다는 것을 알 수 있다. 다른 순위들을 클릭해보면 1등은 **li:nth-child(1)** 같이 규칙적으로 변한다. 만약 이 **li:nth-child(19)** 를 그대로 사용하면 19미만이 출력이 될 것이다. 19등만 선택한 선택자이기 때문이다.그래서 좀 더 포괄적으로 필요한 데이터를 가져오기 위해 **li:nth-child()** 부분을 지워줘야한다.
+
+---------
+
+#### IP우회 코드
+
+- ip를 우회하는 이유
+
+  - 대량으로 크롤링을 시도할 때 이를 방지하기 위해서 웹사이트에서는 로봇으로 인식하여 사이트를
+
+    막아버리는 추세이다.
+
+    따라서 ip를 우회하여 웹페이지가 로봇이 아닌 사람으로 인식 할 수 있도록 먼저 해당 코드를 작성한다.
+
+- 시작하기전에
+
+  1. 컴퓨터에 Tor를 설치
+
+  2. brew services start tor명령어를 사용하여 백그라운드에서 지속적으로 실행
+
+  3. 컴퓨터에 Firefox설치
+
+  4. /usr/local/etc/tor/torrc.sample코드를 torrc로 변경하며 torrc의 코드중 주석되어있는 2개를 주석을 풀어준다.
+
+     ```
+     ControlPort 9051
+     CookieAuthentication 1
+     ```
+
+     
+
+```python
+from stem import Signal
+from stem.control import Controller
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
+
+def switchIP():
+    with Controller.from_port(port = 9051) as controller:
+        controller.authenticate()
+        controller.signal(Signal.NEWNYM)
+```
+
+- switchIp -> ip 전환하는 함수
+
+  ​    Signal.NEWNYM port Tor Control Port(9051)에 신호를 전달하여 Tor에게 라우팅 할 새 회로를
+
+  ​    원한다고 알려준다. 이렇게 하면 새로운 출구 노드가 생겨 다른 IP에서 온 것처럼 보인다.
+
+  - Control Port는 Tor를 제어하는데 사용된다.그리고 밑에서 Socks포트를 이용할텐데 Socks5 실행되는 프록시이다.또한 Tor는 HTTP 프록시가 아니므로 스크립트가 SOCKS5 프록시를 사용하도록 구성되어야한다.
+
+-----------
+
+```python
+def my_proxy(PROXY_HOST,PROXY_PORT):
+    fp = webdriver.FirefoxProfile()
+    # Direct = 0, Manual = 1, PAC = 2, AUTODETECT = 4, SYSTEM = 5
+    fp.set_preference("network.proxy.type", 1)
+    fp.set_preference("network.proxy.socks",PROXY_HOST)
+    fp.set_preference("network.proxy.socks_port",int(PROXY_PORT))
+    fp.update_preferences()
+    options = Options()
+    options.headless = True
+    return webdriver.Firefox(options=options, firefox_profile=fp)
+```
+
+- my_proxy함수
+
+  headless 모드에서 firefox 브라우저를 이용하여 tor를 프록시로 사용하고 라우팅하도록
+
+  selenium 웹 드라이버를 다운 받아 설정한다.
+
+- 이 코드에서 socks는 socks 서버의 반대쪽에 있는 호스트의 연결 요청을 재지정하여 직접적인 IP 접근 없이 한쪽의 호스트가 다른쪽의 호스트에 완전하게 액세스 할 수 있도록 하는 네트워킹 Proxy Protocol이다. socks 권한 없는 사용자가 인터넷을 통해 내부 호스트에 액세스하는 것은 방지하면서도 socks서버 뒤의 호스트가 인터넷에 완전하게 액세스할 수 있도록 하는 네트워크 방화벽이다.
+
+-------------
+
+```python
+for x in range(10):
+    proxy = my_proxy("127.0.0.1", 9050)
+    proxy.get("https://streeteasy.com/")
+    html = proxy.page_source
+    soup = BeautifulSoup(html, 'lxml')
+    print(soup.find("span", {"id": "ipv4"}))
+    print(soup.find("span", {"id": "ipv6"}))
+    switchIP()
+```
+
+- ​    https://streeteasy.com/로 요청을 보내서 selenium 웹 드라이버를 통해
+
+  ​    요청된 ip를 확인할 수 있다.
+
+  ​    때때로 주소가 ipv4이고 때로는 ipv6이기 때문에 Tor회로의 종료 노드의 ipv4 및 ipv6
+
+  ​    주소를 복사한다. 그런 다음 새로운 Tor 회로를 구축하여 새로운 ip를 요청한다.
+
+##### 실행
+
+[![2020-01-17-5-14-09.png](https://i.postimg.cc/J4jcnPmv/2020-01-17-5-14-09.png)](https://postimg.cc/qzMCDcNx)
+
+**설치되어있는 Tor를 실행시키고, 위에 코드를 실행한다.**
+
+
+
+##### 결과
+
+[![2020-01-17-5-13-26.png](https://i.postimg.cc/d3bhmm9f/2020-01-17-5-13-26.png)](https://postimg.cc/q6GBpKSc)
+
+[![2020-01-17-5-13-34.png](https://i.postimg.cc/Kz4j6sqV/2020-01-17-5-13-34.png)](https://postimg.cc/G8wbYz1J)
+
+이렇게 https://streeteasy.com/ 사이트에 접속하는 IP가 다르게 출력이 된다.
+
+------------------
 # GitHub Fork 정리
 
 ### 개요
