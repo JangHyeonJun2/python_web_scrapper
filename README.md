@@ -289,6 +289,76 @@ for x in range(10):
 이렇게 https://streeteasy.com/ 사이트에 접속하는 IP가 다르게 출력이 된다.
 
 ------------------
+# 4주차
+
+#### 스키마작성 및 임의의 데이터값 넣어보기
+
+**DataBase 스키마**
+
+[![2020-01-17-7-23-22.png](https://i.postimg.cc/VvgXBNhL/2020-01-17-7-23-22.png)](https://postimg.cc/2LqqCCmP)
+
+##### DataBase 설계 고려했던 사항
+
+- Selector는 개발자가 생각하는 것이 아니다.
+- 지정된 Selector에서 하위 태그의 Data는 어떻게 처리할 것인가?
+- 여러개의 사이트에서 데이터를 가져올 때 데이터가 사이트 URL과 Data를 어떻게 관계를 맺을 것인가?
+- Selector에 대응하는 Data 1:1인데 테이블을 어떻게 나눌것인가?
+- 지정된 Selector에서 Data 없을 수도 있나?
+- Selector테이블과 Data테이블은 나눈다면 관계는 어떻게 할 것 인가?
+- Selector테이블과 Data테이블에 Column은 무엇이 들어가겠는가?
+
+--------------
+
+#### IP 우회코드에 스크래핑할 수 있는 함수 넣고 테스트하기
+
+```python
+from stem import Signal
+from stem.control import Controller
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
+from bs4 import BeautifulSoup
+
+# signal TOR for a new connection
+def switchIP():
+    with Controller.from_port(port = 9051) as controller:
+        controller.authenticate()
+        controller.signal(Signal.NEWNYM)
+
+# get a new selenium webdriver with tor as the proxy
+def my_proxy(PROXY_HOST,PROXY_PORT):
+    fp = webdriver.FirefoxProfile()
+    # Direct = 0, Manual = 1, PAC = 2, AUTODETECT = 4, SYSTEM = 5
+    fp.set_preference("network.proxy.type", 1)
+    fp.set_preference("network.proxy.socks",PROXY_HOST)
+    fp.set_preference("network.proxy.socks_port",PROXY_PORT)
+    fp.update_preferences()
+   # options = Options()
+   # options.headless = True
+    return webdriver.Firefox(fp)
+
+for x in range(10):
+    proxy = my_proxy("127.0.0.1", 9050)
+    proxy.get('https://music.naver.com/')
+    html = proxy.page_source
+    ----------------------------------------------------------------------
+    soup = BeautifulSoup(html, 'html.parser')
+    body = soup.select('tbody > tr._tracklist_move._track_dsc.list1.on')
+    print (type(body), len(body))
+    for p in body:
+       print(p.text)
+    ----------------------------------------------------------------------
+    print(soup.find("span", {"id": "ipv4"}))
+    print(soup.find("span", {"id": "ipv6"}))
+    switchIP()
+```
+
+##### 결과
+
+[![2020-01-17-8-07-55.png](https://i.postimg.cc/9M4fgnK5/2020-01-17-8-07-55.png)](https://postimg.cc/bDh8s3q3)
+
+
+
+-------------------
 # GitHub Fork 정리
 
 ### 개요
